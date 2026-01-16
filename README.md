@@ -17,6 +17,13 @@ npm install
 npm run dev
 ```
 
+The app uses a Netlify Function proxy in production. For local testing with the function, install the Netlify CLI and run:
+
+```bash
+npm install -g netlify-cli
+netlify dev
+```
+
 ## Build
 
 ```bash

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import './App.css'
 
-const API_ENDPOINT = 'https://api.cobalt.tools/api/json'
+const API_ENDPOINT = '/.netlify/functions/cobalt'
 
 function App() {
   const [urlInput, setUrlInput] = useState('')
