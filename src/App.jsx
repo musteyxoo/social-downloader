@@ -49,20 +49,35 @@ function App() {
         throw new Error(data.message || 'Unable to fetch media for this link.')
       }
 
-      const resolvedUrls = Array.isArray(data.medias)
-        ? data.medias.map((item) => item?.url).filter(Boolean)
-        : []
+      const mediaItems = Array.isArray(data.medias) ? data.medias : []
+      const filteredItems = mediaItems.filter((item) => item?.url)
 
-      const entries = resolvedUrls.map((mediaUrl, index) => ({
-        id: `${Date.now()}-${index}`,
-        url: mediaUrl,
-      }))
+      const getMediaScore = (item) => {
+        let score = 0
+        const quality = (item.quality || '').toLowerCase()
 
-      if (!entries.length) {
+        if (item.type === 'video') score += 300
+        if (item.type === 'image') score += 200
+        if (item.type === 'audio') score += 100
+        if (quality.includes('hd')) score += 30
+        if (quality.includes('no_watermark') || quality.includes('no-watermark')) score += 25
+        if (quality.includes('watermark')) score -= 10
+
+        return score
+      }
+
+      const bestItem = filteredItems.sort((a, b) => getMediaScore(b) - getMediaScore(a))[0]
+
+      if (!bestItem?.url) {
         throw new Error('No downloadable media found for this link.')
       }
 
-      setDownloads(entries)
+      setDownloads([
+        {
+          id: `${Date.now()}-0`,
+          url: bestItem.url,
+        },
+      ])
     } catch (error) {
       setErrorMessage(error.message)
     } finally {
