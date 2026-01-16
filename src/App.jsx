@@ -40,26 +40,23 @@ function App() {
         },
         body: JSON.stringify({
           url: urlInput.trim(),
-          vCodec: 'h264',
-          vQuality: 'max',
-          filenameStyle: 'classic',
-          audioFormat: 'best',
         }),
       })
 
       const data = await response.json()
 
-      if (!response.ok || data.status === 'error') {
-        throw new Error(data.text || 'Unable to fetch media for this link.')
+      if (!response.ok || data.error) {
+        throw new Error(data.message || 'Unable to fetch media for this link.')
       }
 
-      const resolvedUrls = Array.isArray(data.url) ? data.url : [data.url]
-      const entries = resolvedUrls
-        .filter(Boolean)
-        .map((mediaUrl, index) => ({
-          id: `${Date.now()}-${index}`,
-          url: mediaUrl,
-        }))
+      const resolvedUrls = Array.isArray(data.medias)
+        ? data.medias.map((item) => item?.url).filter(Boolean)
+        : []
+
+      const entries = resolvedUrls.map((mediaUrl, index) => ({
+        id: `${Date.now()}-${index}`,
+        url: mediaUrl,
+      }))
 
       if (!entries.length) {
         throw new Error('No downloadable media found for this link.')
@@ -153,10 +150,7 @@ function App() {
       </section>
 
       <footer className="footer">
-        <p>
-          Powered by the Cobalt public API. Use responsibly and respect content
-          rights.
-        </p>
+        <p>Powered by RapidAPI. Use responsibly and respect content rights.</p>
       </footer>
     </div>
   )

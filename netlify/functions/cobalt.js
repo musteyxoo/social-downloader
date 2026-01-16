@@ -32,15 +32,34 @@ export const handler = async (event) => {
     }
   }
 
-  try {
-    const response = await fetch('https://api.cobalt.tools/api/json', {
-      method: 'POST',
+  const rapidApiKey = process.env.RAPIDAPI_KEY
+
+  if (!rapidApiKey) {
+    return {
+      statusCode: 200,
       headers: {
-        Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload),
-    })
+      body: JSON.stringify({
+        status: 'error',
+        text: 'Missing RapidAPI key. Add RAPIDAPI_KEY in Netlify env.',
+      }),
+    }
+  }
+
+  try {
+    const response = await fetch(
+      'https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-rapidapi-host': 'social-download-all-in-one.p.rapidapi.com',
+          'x-rapidapi-key': rapidApiKey,
+        },
+        body: JSON.stringify({ url: payload.url }),
+      }
+    )
 
     const data = await response.json()
 
