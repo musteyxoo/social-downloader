@@ -1,5 +1,7 @@
 # Social Downloader
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/1c1c5fe0-6184-4cd2-8276-55753b37f8a3/deploy-status)](https://app.netlify.com/projects/social-downloarder/deploys)
+
 A React web app that downloads media from Instagram, TikTok, and X (Twitter) using the Cobalt public API.
 
 ## Features
