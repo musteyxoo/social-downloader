@@ -47,13 +47,9 @@ function App() {
         }),
       })
 
-      if (!response.ok) {
-        throw new Error('Download service responded with an error.')
-      }
-
       const data = await response.json()
 
-      if (data.status === 'error') {
+      if (!response.ok || data.status === 'error') {
         throw new Error(data.text || 'Unable to fetch media for this link.')
       }
 

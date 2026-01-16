@@ -1,32 +1,35 @@
-export default async (request) => {
-  if (request.method !== 'POST') {
-    return new Response('Method Not Allowed', {
-      status: 405,
+export const handler = async (event) => {
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
       headers: {
         Allow: 'POST',
       },
-    })
+      body: 'Method Not Allowed',
+    }
   }
 
   let payload
   try {
-    payload = await request.json()
+    payload = JSON.parse(event.body || '{}')
   } catch (error) {
-    return new Response(JSON.stringify({ status: 'error', text: 'Invalid JSON.' }), {
-      status: 400,
+    return {
+      statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
       },
-    })
+      body: JSON.stringify({ status: 'error', text: 'Invalid JSON.' }),
+    }
   }
 
   if (!payload?.url) {
-    return new Response(JSON.stringify({ status: 'error', text: 'Missing url.' }), {
-      status: 400,
+    return {
+      statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
       },
-    })
+      body: JSON.stringify({ status: 'error', text: 'Missing url.' }),
+    }
   }
 
   try {
@@ -41,23 +44,22 @@ export default async (request) => {
 
     const data = await response.json()
 
-    return new Response(JSON.stringify(data), {
-      status: response.status,
+    return {
+      statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       },
-    })
+      body: JSON.stringify(data),
+    }
   } catch (error) {
-    return new Response(
-      JSON.stringify({ status: 'error', text: 'Upstream request failed.' }),
-      {
-        status: 502,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-      }
-    )
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: JSON.stringify({ status: 'error', text: 'Upstream request failed.' }),
+    }
   }
 }
